@@ -9,59 +9,69 @@ import type { Product } from "./types/Index";
 import Footer from "./components/Footer";
 
 export default function HomePageApp() {
-  const [currentPage, setCurrentPage] = useState<"home" | "products" | "admin">(
-    "home"
-  );
+  const [currentPage, setCurrentPage] = useState<"home" | "products" | "admin">("home");
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  // 🔹 Fetch products from backend when component mounts
   useEffect(() => {
-    const defaultProducts: Product[] = [
-      {
-        id: "1",
-        name: "Premium Gold Runner",
-        color: "Gold/White",
-        price: 189.99,
-        image:
-          "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop",
-      },
-      {
-        id: "2",
-        name: "Urban Ash Elite",
-        color: "Ash Grey",
-        price: 159.99,
-        image:
-          "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500&h=500&fit=crop",
-      },
-      {
-        id: "3",
-        name: "Luxe Gold Sport",
-        color: "Metallic Gold",
-        price: 219.99,
-        image:
-          "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&h=500&fit=crop",
-      }
-    ];
-
-    setProducts(defaultProducts);
+    fetchProducts();
   }, []);
 
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("http://localhost:4000/products");
+      if (!res.ok) throw new Error("Failed to fetch products");
+      const data: Product[] = await res.json();
+      setProducts(data);
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔹 Handle placing an order
   const handleOrderNow = (product: Product) => {
     alert(
-      `Order placed for ${product.name}!\nColor: ${product.color}\nPrice: $${product.price.toFixed(
-        2
-      )}`
+      `Order placed for ${product.name}!\nColor: ${product.color}\nPrice: $${product.price.toFixed(2)}`
     );
   };
 
-  const handleAddProduct = (product: Product) => {
-    setProducts([...products, product]);
-    alert("Product added successfully!");
+  // 🔹 Add product to MongoDB
+  const handleAddProduct = async (product: Product) => {
+    try {
+      const res = await fetch("http://localhost:4000/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(product),
+      });
+
+      if (!res.ok) throw new Error("Failed to add product");
+
+      const newProduct = await res.json(); // backend returns { status, product }
+      setProducts((prev) => [newProduct.product, ...prev]);
+      alert("Product added successfully!");
+    } catch (error) {
+      console.error("Error adding product:", error);
+    }
   };
 
-  const handleDeleteProduct = (id: string) => {
-    if (confirm("Are you sure you want to delete this product?")) {
-      setProducts(products.filter((p) => p.id !== id));
+  // 🔹 Delete product from MongoDB
+  const handleDeleteProduct = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this product?")) return;
+
+    try {
+      const res = await fetch(`http://localhost:4000/products/${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete product");
+
+      setProducts((prev) => prev.filter((p) => p.id !== id));
       alert("Product deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting product:", error);
     }
   };
 
@@ -70,23 +80,23 @@ export default function HomePageApp() {
       <Navigation currentPage={currentPage} setCurrentPage={setCurrentPage} />
 
       {currentPage === "home" && (
-        <Hero
-          products={products}
-          onOrder={handleOrderNow}
-          onExplore={() => setCurrentPage("products")}
-        />
+        <Hero products={products} onOrder={handleOrderNow} onExplore={() => setCurrentPage("products")} />
       )}
 
       {currentPage === "products" && (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black py-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 py-32 sm:px-6 lg:px-8">
             <h1 className="text-5xl font-bold mb-12 text-center">
               <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
                 Our Collection
               </span>
             </h1>
 
-            <ProductGrid products={products} onOrder={handleOrderNow} />
+            {loading ? (
+              <p className="text-center text-gray-400">Loading products...</p>
+            ) : (
+              <ProductGrid products={products} />
+            )}
           </div>
         </div>
       )}
@@ -114,12 +124,8 @@ export default function HomePageApp() {
                     />
 
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold text-yellow-500">
-                        {product.name}
-                      </h3>
-                      <p className="text-gray-400">
-                        Color: {product.color}
-                      </p>
+                      <h3 className="text-xl font-bold text-yellow-500">{product.name}</h3>
+                      <p className="text-gray-400">{product.color}</p>
                     </div>
 
                     <div className="text-2xl font-bold text-yellow-500">

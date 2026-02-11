@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -8,46 +9,53 @@ const app = express();
 app.use(cors({ origin: true }));
 app.use(express.json());
 
-const PORT = process.env.PORT || 4000;
-const token = process.env.WHATSAPP_TOKEN;
-const phoneNumberId = process.env.WHATSAPP_PHONE_ID;
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.error(err));
 
-app.post('/send-whatsapp', async (req, res) => {
-  const { phone, message, imageUrl } = req.body;
+// --- Product Schema ---
+const productSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  description: String,
+  price: { type: Number, required: true },
+  imageUrl: String,
+  createdAt: { type: Date, default: Date.now }
+});
 
-  if (!token || !phoneNumberId) {
-    return res.status(500).json({ error: 'Missing WHATSAPP_TOKEN or WHATSAPP_PHONE_ID in server environment' });
-  }
+const Product = mongoose.model('Product', productSchema);
 
-  if (!phone || !message) {
-    return res.status(400).json({ error: 'phone and message are required' });
-  }
+// --- Routes ---
+
+// Admin uploads product
+app.post('/products', async (req, res) => {
+  const { title, description, price, imageUrl } = req.body;
+  if (!title || !price) return res.status(400).json({ error: 'Title and price are required' });
 
   try {
-    const payload = {
-      messaging_product: 'whatsapp',
-      to: phone,
-      type: imageUrl ? 'image' : 'text',
-      ...(imageUrl ? { image: { link: imageUrl, caption: message } } : { text: { body: message } })
-    };
-
-    const response = await fetch(`https://graph.facebook.com/v17.0/${phoneNumberId}/messages`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    });
-
-    const data = await response.json();
-    res.status(response.ok ? 200 : 500).json(data);
+    const product = new Product({ title, description, price, imageUrl });
+    await product.save();
+    res.status(201).json({ status: 'success', product });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to send WhatsApp message' });
+    res.status(500).json({ error: 'Failed to add product' });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`WhatsApp API proxy listening on http://localhost:${PORT}`);
+// Users fetch all products
+app.get('/products', async (req, res) => {
+  try {
+    const products = await Product.find().sort({ createdAt: -1 });
+    res.status(200).json(products);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch products' });
+  }
 });
+
+// Start server
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log(`Zilux backend running on http://localhost:${PORT}`));

@@ -11,7 +11,7 @@ interface HeroProps {
 
 export default function Hero({ products, onOrder, onExplore }: HeroProps) {
   return (
-    <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+    <section className="bg-gradient-to-br py-6 from-gray-900 via-gray-800 to-black">
       {/* ================= HERO ================= */}
       <div className="relative min-h-screen flex items-center overflow-hidden">
         {/* Mobile background image */}

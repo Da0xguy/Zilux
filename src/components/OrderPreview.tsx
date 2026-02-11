@@ -18,7 +18,7 @@ export default function OrderPreview({ product, onClose }: Props) {
   if (!product) return null;
 
   const handleCheckout = async () => {
-    const message = `\n🥿 *New Shoe Order – ZILUX*\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n👟 Shoe Size: ${size}\n📍 Address: ${address}\n\n📦 *Product*\n• Name: ${product.name}\n• Price: ${product.price}\n• Image: ${product.imageUrl}\n`;
+    const message = `\n🥿 *New Shoe Order – ZILUX*\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n👟 Shoe Size: ${size}\n📍 Address: ${address}\n\n📦 *Product*\n• Name: ${product.name}\n• Price: ${product.price}\n• Image: ${product.image}\n`;
 
     const whatsappNumber = "234XXXXXXXXXX"; // your business number
 
@@ -26,7 +26,7 @@ export default function OrderPreview({ product, onClose }: Props) {
       const res = await fetch("http://localhost:4000/send-whatsapp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: whatsappNumber, message, imageUrl: product.imageUrl }),
+        body: JSON.stringify({ phone: whatsappNumber, message, imageUrl: product.image }),
       });
 
       if (res.ok) {
@@ -37,7 +37,7 @@ export default function OrderPreview({ product, onClose }: Props) {
       throw new Error("Server error");
     } catch (err) {
       // fallback to opening WhatsApp web if server unavailable
-      const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      const url = `https://wa.me/${+2349117895025}?text=${encodeURIComponent(message)}`;
       window.open(url, "_blank");
     }
   };
@@ -56,7 +56,7 @@ export default function OrderPreview({ product, onClose }: Props) {
         {/* Product Preview */}
         <div className="flex gap-4 mb-6">
           <img
-            src={product.imageUrl}
+            src={product.image}
             className="w-28 h-28 rounded-xl object-cover"
           />
           <div>

@@ -1,47 +1,106 @@
-import React, { useState, type FormEvent } from "react";
+"use client";
+
+import React, { useState } from "react";
+import { OurFileRouter } from "../";
+
 import type { Product } from "../types/Index";
 
-interface AdminFormProps {
+type AdminFormProps = {
   onAdd: (product: Product) => void;
-}
+};
 
 export default function AdminForm({ onAdd }: AdminFormProps) {
   const [name, setName] = useState("");
   const [color, setColor] = useState("");
-  const [price, setPrice] = useState("");
-  const [image, setImage] = useState("");
+  const [price, setPrice] = useState<number | "">("");
+  const [uploading, setUploading] = useState(false);
 
-  const handleSubmit = (e: FormEvent) => {
+  const { startUpload } = useUploadThing("productImage"); // matches your file router key
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onAdd({
-      id: Date.now().toString(),
-      name,
-      color,
-      price: parseFloat(price),
-      image: image || "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=500&h=500&fit=crop"
-    });
-    setName(""); setColor(""); setPrice(""); setImage("");
-  };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setImage(reader.result as string);
-      reader.readAsDataURL(file);
+    if (!name || !color || !price) {
+      alert("Name, color, and price are required");
+      return;
+    }
+
+    setUploading(true);
+
+    try {
+      // Start the upload (image must be selected in <input type="file" />)
+      const files = (document.getElementById("image") as HTMLInputElement)?.files;
+
+      if (!files || files.length === 0) {
+        alert("Please select an image");
+        setUploading(false);
+        return;
+      }
+
+      const uploadedFiles = await startUpload(files);
+
+      if (!uploadedFiles || uploadedFiles.length === 0) {
+        alert("Image upload failed");
+        setUploading(false);
+        return;
+      }
+
+      const imageUrl = uploadedFiles[0].fileUrl;
+
+      // Send product to backend
+      onAdd({
+        _id: "", // backend will generate this
+        name,
+        color,
+        price: Number(price),
+        image: imageUrl,
+      });
+
+      // Reset form
+      setName("");
+      setColor("");
+      setPrice("");
+      (document.getElementById("image") as HTMLInputElement).value = "";
+    } catch (err) {
+      console.error("Upload failed:", err);
+      alert("Upload failed");
+    } finally {
+      setUploading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-yellow-500/20 shadow-lg">
-      <h2 className="text-3xl font-bold text-yellow-500 mb-6">Add New Product</h2>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <input
+        type="text"
+        placeholder="Product Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        className="w-full p-2 rounded border"
+      />
+      <input
+        type="text"
+        placeholder="Color"
+        value={color}
+        onChange={(e) => setColor(e.target.value)}
+        className="w-full p-2 rounded border"
+      />
+      <input
+        type="number"
+        placeholder="Price"
+        value={price}
+        onChange={(e) => setPrice(e.target.value)}
+        className="w-full p-2 rounded border"
+      />
+      <input type="file" id="image" accept="image/*" className="w-full" />
 
-      <input type="text" placeholder="Product Name" className="input" value={name} onChange={e => setName(e.target.value)} required />
-      <input type="text" placeholder="Color" className="input" value={color} onChange={e => setColor(e.target.value)} required />
-      <input type="number" placeholder="Price" className="input" value={price} onChange={e => setPrice(e.target.value)} required />
-      <input type="file" accept="image/*" onChange={handleImageUpload} className="file-input" />
-      {image && <img src={image} alt="Preview" className="w-full h-48 object-cover rounded-lg border border-yellow-500/30" />}
-      <button type="submit" className="btn-primary w-full">Add Product</button>
+      <button
+        type="submit"
+        disabled={uploading}
+        className="bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-600 transition"
+      >
+        {uploading ? "Uploading..." : "Add Product"}
+      </button>
     </form>
   );
 }
