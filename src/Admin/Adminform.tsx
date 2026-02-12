@@ -71,37 +71,69 @@ export default function AdminForm({ onAdd }: AdminFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+  <form
+    onSubmit={handleSubmit}
+    className="w-full max-w-xl mx-auto space-y-6 bg-gradient-to-br py-32 from-gray-900 to-black p-8 rounded-3xl border border-white/10 shadow-2xl"
+  >
+    <h2 className="text-2xl font-bold text-yellow-500 mb-2">
+      Add New Product
+    </h2>
+
+    {/* Product Name */}
+    <div className="space-y-2">
+      <label className="text-sm text-gray-400">Product Name</label>
       <input
         type="text"
-        placeholder="Product Name"
+        placeholder="e.g. Air Max Pro"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        className="w-full p-2 rounded border"
+        className="w-full px-4 py-3 rounded-xl bg-black/60 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition"
       />
+    </div>
+
+    {/* Color */}
+    <div className="space-y-2">
+      <label className="text-sm text-gray-400">Color</label>
       <input
         type="text"
-        placeholder="Color"
+        placeholder="e.g. Black / White"
         value={color}
         onChange={(e) => setColor(e.target.value)}
-        className="w-full p-2 rounded border"
+        className="w-full px-4 py-3 rounded-xl bg-black/60 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition"
       />
+    </div>
+
+    {/* Price */}
+    <div className="space-y-2">
+      <label className="text-sm text-gray-400">Price (₦)</label>
       <input
         type="number"
-        placeholder="Price"
+        placeholder="e.g. 45000"
         value={price}
         onChange={(e) => setPrice(parseInt(e.target.value) || 0)}
-        className="w-full p-2 rounded border"
+        className="w-full px-4 py-3 rounded-xl bg-black/60 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition"
       />
-      <input type="file" id="image" accept="image/*" className="w-full" />
+    </div>
 
-      <button
-        type="submit"
-        disabled={uploading}
-        className="bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-600 transition"
-      >
-        {uploading ? "Uploading..." : "Add Product"}
-      </button>
-    </form>
-  );
+    {/* Image Upload */}
+    <div className="space-y-2">
+      <label className="text-sm text-gray-400">Product Image</label>
+      <input
+        type="file"
+        id="image"
+        accept="image/*"
+        className="w-full file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-yellow-500 file:text-black hover:file:bg-yellow-600 cursor-pointer text-gray-400"
+      />
+    </div>
+
+    {/* Submit Button */}
+    <button
+      type="submit"
+      disabled={uploading}
+      className="w-full py-4 rounded-xl bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-semibold text-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-lg disabled:opacity-60"
+    >
+      {uploading ? "Uploading..." : "Add Product"}
+    </button>
+  </form>
+);
 }
