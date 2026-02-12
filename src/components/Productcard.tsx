@@ -11,7 +11,7 @@ export default function ProductCard({ product, onOrder }: ProductCardProps) {
       <div className="relative h-64 overflow-hidden bg-gray-700">
         <img
           src={product.image}
-          alt={product.name}
+          alt={product.title}
           className="w-full h-full object-cover"
         />
         <div className="absolute top-4 right-4 bg-yellow-500 text-black px-3 py-1 rounded-full font-bold">
@@ -21,7 +21,7 @@ export default function ProductCard({ product, onOrder }: ProductCardProps) {
 
       <div className="p-6">
         <h3 className="text-2xl font-bold text-yellow-500 mb-2">
-          {product.name}
+          {product.title}
         </h3>
         <p className="text-gray-400 mb-4">Color: {product.color}</p>
 

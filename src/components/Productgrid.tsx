@@ -6,8 +6,9 @@ import OrderPreview from "./OrderPreview";
 import type { Product } from "../types/Index";
 
 interface ProductGridProps {
-  products: Product[];
-  slice?: number; // optional preview
+  products: Product[]
+  slice?: number
+  onOrder?: (product: Product) => void
 }
 
 export default function ProductGrid({ products, slice }: ProductGridProps) {

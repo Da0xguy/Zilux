@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState, type Dispatch, type SetStateAction } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { Upload, Home, Package, Menu, X } from "lucide-react";
-import AdminAuthModal from "./AdminAuthModal"; // ✅ ADD THIS
+import AdminAuthModal from "./AdminAuthModal";
+
+type Page = "home" | "products" | "admin";
 
 interface NavigationProps {
-  currentPage: "home" | "products" | "admin";
-  setCurrentPage: Dispatch<SetStateAction<"home" | "products" | "admin">>;
+  currentPage: Page;
+  setCurrentPage: Dispatch<SetStateAction<Page>>;
 }
 
 export default function Navigation({
@@ -14,16 +16,20 @@ export default function Navigation({
   setCurrentPage,
 }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [showAdminModal, setShowAdminModal] = useState(false); // ✅ ADD THIS
+  const [showAdminModal, setShowAdminModal] = useState(false);
 
-  const navItems = [
+  // ✅ Explicitly type navItems
+  const navItems: {
+    name: Page;
+    label: string;
+    icon: typeof Home;
+  }[] = [
     { name: "home", label: "Home", icon: Home },
     { name: "products", label: "Products", icon: Package },
     { name: "admin", label: "Admin", icon: Upload },
   ];
 
-  // ✅ HANDLE NAV CLICKS
-  const handleNavClick = (page: "home" | "products" | "admin") => {
+  const handleNavClick = (page: Page) => {
     if (page === "admin") {
       setShowAdminModal(true);
     } else {
@@ -61,7 +67,9 @@ export default function Navigation({
                     }`}
                   >
                     <Icon size={18} />
-                    <span className="text-sm font-medium">{item.label}</span>
+                    <span className="text-sm font-medium">
+                      {item.label}
+                    </span>
                   </button>
                 );
               })}
@@ -103,7 +111,6 @@ export default function Navigation({
         </div>
       </header>
 
-      {/* ✅ ADMIN AUTH MODAL */}
       <AdminAuthModal
         isOpen={showAdminModal}
         onClose={() => setShowAdminModal(false)}

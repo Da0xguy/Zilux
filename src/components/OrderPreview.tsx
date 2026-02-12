@@ -18,15 +18,31 @@ export default function OrderPreview({ product, onClose }: Props) {
   if (!product) return null;
 
   const handleCheckout = async () => {
-    const message = `\n🥿 *New Shoe Order – ZILUX*\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n👟 Shoe Size: ${size}\n📍 Address: ${address}\n\n📦 *Product*\n• Name: ${product.name}\n• Price: ${product.price}\n• Image: ${product.image}\n`;
+    const message = `
+🥿 *New Shoe Order – ZILUX*
 
-    const whatsappNumber = "234XXXXXXXXXX"; // your business number
+👤 Name: ${name}
+📞 Phone: ${phone}
+👟 Shoe Size: ${size}
+📍 Address: ${address}
+
+📦 *Product*
+• Title: ${product.title}
+• Price: ₦${product.price.toFixed(2)}
+• Image: ${product.image}
+`;
+
+    const whatsappNumber = "2349117895025"; // no + inside wa.me
 
     try {
       const res = await fetch("http://localhost:4000/send-whatsapp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: whatsappNumber, message, imageUrl: product.image }),
+        body: JSON.stringify({
+          phone: whatsappNumber,
+          message,
+          imageUrl: product.image,
+        }),
       });
 
       if (res.ok) {
@@ -34,10 +50,12 @@ export default function OrderPreview({ product, onClose }: Props) {
         onClose();
         return;
       }
+
       throw new Error("Server error");
     } catch (err) {
-      // fallback to opening WhatsApp web if server unavailable
-      const url = `https://wa.me/${+2349117895025}?text=${encodeURIComponent(message)}`;
+      const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+        message
+      )}`;
       window.open(url, "_blank");
     }
   };
@@ -47,7 +65,9 @@ export default function OrderPreview({ product, onClose }: Props) {
       <div className="w-full md:max-w-2xl bg-gradient-to-br from-gray-900 to-black rounded-t-3xl md:rounded-3xl p-6 shadow-2xl border border-white/10">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-2xl font-bold text-yellow-500">Order Preview</h3>
+          <h3 className="text-2xl font-bold text-yellow-500">
+            Order Preview
+          </h3>
           <button onClick={onClose}>
             <X className="text-gray-400 hover:text-white" />
           </button>
@@ -57,11 +77,16 @@ export default function OrderPreview({ product, onClose }: Props) {
         <div className="flex gap-4 mb-6">
           <img
             src={product.image}
+            alt={product.title}
             className="w-28 h-28 rounded-xl object-cover"
           />
           <div>
-            <p className="text-lg font-semibold text-white">{product.name}</p>
-            <p className="text-yellow-400">{product.price}</p>
+            <p className="text-lg font-semibold text-white">
+              {product.title}
+            </p>
+            <p className="text-yellow-400">
+              ₦{product.price.toFixed(2)}
+            </p>
           </div>
         </div>
 
