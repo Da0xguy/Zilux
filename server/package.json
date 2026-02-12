@@ -4,13 +4,14 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "node --watch index.js"
   },
   "dependencies": {
     "cors": "^2.8.6",
     "dotenv": "^16.6.1",
     "express": "^4.22.1",
-    "mongoose": "^9.2.0"
+    "mongoose": "^9.2.0",
+    "uploadthing": "^7.7.4"
   },
   "engines": {
     "node": ">=18"

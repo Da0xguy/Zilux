@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { OurFileRouter } from "../";
-
+import { useUploadThing } from "../utils/uploadthing";
 import type { Product } from "../types/Index";
+
 
 type AdminFormProps = {
   onAdd: (product: Product) => void;
@@ -37,7 +37,8 @@ export default function AdminForm({ onAdd }: AdminFormProps) {
         return;
       }
 
-      const uploadedFiles = await startUpload(files);
+      const uploadedFiles = await startUpload([...files]);
+      console.log("Uploaded files:", uploadedFiles);
 
       if (!uploadedFiles || uploadedFiles.length === 0) {
         alert("Image upload failed");
@@ -45,12 +46,12 @@ export default function AdminForm({ onAdd }: AdminFormProps) {
         return;
       }
 
-      const imageUrl = uploadedFiles[0].fileUrl;
+      const imageUrl = uploadedFiles[0].url;
 
       // Send product to backend
       onAdd({
-        _id: "", // backend will generate this
-        name,
+        id: "", // backend will generate this
+        title: name,
         color,
         price: Number(price),
         image: imageUrl,
@@ -89,7 +90,7 @@ export default function AdminForm({ onAdd }: AdminFormProps) {
         type="number"
         placeholder="Price"
         value={price}
-        onChange={(e) => setPrice(e.target.value)}
+        onChange={(e) => setPrice(parseInt(e.target.value) || 0)}
         className="w-full p-2 rounded border"
       />
       <input type="file" id="image" accept="image/*" className="w-full" />

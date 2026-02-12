@@ -21,7 +21,7 @@ export default function HomePageApp() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:4000/products");
+      const res = await fetch("/api/products");
       if (!res.ok) throw new Error("Failed to fetch products");
       const data: Product[] = await res.json();
       setProducts(data);
@@ -35,14 +35,14 @@ export default function HomePageApp() {
   // 🔹 Handle placing an order
   const handleOrderNow = (product: Product) => {
     alert(
-      `Order placed for ${product.name}!\nColor: ${product.color}\nPrice: $${product.price.toFixed(2)}`
+      `Order placed for ${product.title}!\nColor: ${product.color}\nPrice: $${product.price.toFixed(2)}`
     );
   };
 
   // 🔹 Add product to MongoDB
   const handleAddProduct = async (product: Product) => {
     try {
-      const res = await fetch("http://localhost:4000/products", {
+      const res = await fetch("/api/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(product),
@@ -63,7 +63,7 @@ export default function HomePageApp() {
     if (!confirm("Are you sure you want to delete this product?")) return;
 
     try {
-      const res = await fetch(`http://localhost:4000/products/${id}`, {
+      const res = await fetch(`api/products/${id}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete product");
@@ -119,12 +119,12 @@ export default function HomePageApp() {
                   >
                     <img
                       src={product.image}
-                      alt={product.name}
+                      alt={product.title}
                       className="w-20 h-20 object-cover rounded-lg"
                     />
 
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold text-yellow-500">{product.name}</h3>
+                      <h3 className="text-xl font-bold text-yellow-500">{product.title}</h3>
                       <p className="text-gray-400">{product.color}</p>
                     </div>
 
