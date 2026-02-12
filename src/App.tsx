@@ -63,7 +63,7 @@ export default function HomePageApp() {
     if (!confirm("Are you sure you want to delete this product?")) return;
 
     try {
-      const res = await fetch(`api/products/${id}`, {
+      const res = await fetch(`/api/products/${id}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete product");

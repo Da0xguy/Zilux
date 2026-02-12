@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "start": "node server/index.js",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -17,11 +18,12 @@
     "lucide-react": "^0.563.0",
     "mongodb": "^7.1.0",
     "mongoose": "^9.2.0",
-    "next": "^16.1.6",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "tailwindcss": "^4.1.18",
-    "uploadthing": "^7.7.4"
+    "uploadthing": "^7.7.4",
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

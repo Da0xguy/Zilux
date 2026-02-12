@@ -10,7 +10,7 @@ export default defineConfig({
            '/api': {
                target: 'http://localhost:4000', // Backend server URL
                changeOrigin: true, // Changes the origin of the host header to the target URL
-               rewrite: (path) => path.replace(/^\/api/, ''), // Removes '/api' prefix before forwarding
+            //    rewrite: (path) => path.replace(/^\/api/, ''), // Removes '/api' prefix before forwarding
            },
        },
    },
