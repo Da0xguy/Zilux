@@ -41,6 +41,5 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-export default app;
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`Zilux backend running on http://localhost:${PORT}`));
