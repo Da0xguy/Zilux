@@ -1,0 +1,14 @@
+POST http://localhost:4000/api/products
+Content-Type: application/json
+
+{
+    "id": "",
+    "title": "baaaaa",
+    "color": "hoeeoe",
+    "price": 3000,
+    "image": "https://utfs.io/f/C3Q7FUBLlYNVcEnpGqQXrJ9V1NavZRj65LGfFYkS7KzUTbi3"
+}
+
+###
+GET http://localhost:4000/api/products
+

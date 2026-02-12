@@ -29,7 +29,7 @@ export default function OrderPreview({ product, onClose }: Props) {
 📦 *Product*
 • Title: ${product.title}
 • Price: ₦${product.price.toFixed(2)}
-• Image: ${product.image}
+• Image: ${product.imageUrl}
 `;
 
     const whatsappNumber = "2349117895025"; // no + inside wa.me
@@ -41,7 +41,7 @@ export default function OrderPreview({ product, onClose }: Props) {
         body: JSON.stringify({
           phone: whatsappNumber,
           message,
-          imageUrl: product.image,
+          imageUrl: product.imageUrl,
         }),
       });
 
@@ -76,7 +76,7 @@ export default function OrderPreview({ product, onClose }: Props) {
         {/* Product Preview */}
         <div className="flex gap-4 mb-6">
           <img
-            src={product.image}
+            src={product.imageUrl}
             alt={product.title}
             className="w-28 h-28 rounded-xl object-cover"
           />

@@ -118,7 +118,7 @@ export default function HomePageApp() {
                     className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg p-4 border border-yellow-500/20 flex items-center space-x-4"
                   >
                     <img
-                      src={product.image}
+                      src={product.imageUrl}
                       alt={product.title}
                       className="w-20 h-20 object-cover rounded-lg"
                     />

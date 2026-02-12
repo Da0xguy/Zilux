@@ -10,7 +10,7 @@ export default function ProductCard({ product, onOrder }: ProductCardProps) {
     <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl overflow-hidden border border-yellow-500/20 hover:border-yellow-500/50 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-yellow-500/20">
       <div className="relative h-64 overflow-hidden bg-gray-700">
         <img
-          src={product.image}
+          src={product.imageUrl}
           alt={product.title}
           className="w-full h-full object-cover"
         />

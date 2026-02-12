@@ -26,16 +26,20 @@ app.use(
   }),
 );
 
+if (!process.env.MONGODB_URI) {
+  console.error("MONGODB_URI is not defined in environment variables");
+  process.exit(1);
+}
 // Connect to MongoDB
-// mongoose.connect(process.env.MONGODB_URI)
-// .then(() => console.log('MongoDB connected'))
-// .catch(err => console.error(err));
+mongoose.connect(process.env.MONGODB_URI)
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.error(err));
 
 
 // --- Routes ---
 app.use('/api/products', productsRouter);
 
-
+// Not Found handler
 app.use((req, res) => {
   console.warn(`Unhandled route: ${req.method} ${req.path}`);
   res.status(404).json({ error: 'Route not found' });

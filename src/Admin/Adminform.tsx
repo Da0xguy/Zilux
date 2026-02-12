@@ -54,7 +54,7 @@ export default function AdminForm({ onAdd }: AdminFormProps) {
         title: name,
         color,
         price: Number(price),
-        image: imageUrl,
+        imageUrl,
       });
 
       // Reset form
